@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.imhumman">
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/im_human"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".FullScreenImageDisplay" />
+        <activity
+            android:name=".PhoneAndEmailAuthActivity"
+            android:label="التحقق من رقم الهاتف" />
+        <activity
+            android:name=".MapActivity"
+            android:label="اضافة موقع" />
+        <activity
+            android:name=".MapActivityDisplayLocation"
+            android:label="موقع " />
+        <activity
+            android:name=".SignInActivity"
+            android:label="تسجيل دخول" />
+        <activity
+            android:name=".AddPostActivity"
+            android:label="اضف منشور" />
+        <activity
+            android:name=".SignUpActivity"
+            android:label="تسجيل حساب" />
+        <activity
+            android:name=".MyPostsActivity"
+            android:label="منشوراتي" />
+        <activity
+            android:name=".UserProfileActivity"
+            android:label="حسابي" />
+        <activity
+            android:name=".SavedPostsActivity"
+            android:label="المنشورات المحفوظة" />
+        <activity
+            android:name=".AllPostsActivity"
+            android:label="الصفحة الرئيسية">
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/APIs_Map_Key" />
+    </application>
+
+</manifest>

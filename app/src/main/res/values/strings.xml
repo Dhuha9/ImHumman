@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name"> انا انسان</string>
+    <string name="passwordForgetQuestion">هل نسيت كلمة المرور ؟</string>
+    <string name="signUpNow">سجل الان !</string>
+    <string name="email">البريد الالكتروني</string>
+    <string name="password">كلمة المرور</string>
+    <string name="doYouHaveAccount">هل لديك حساب ؟</string>
+    <string name="signIn">تسجيل الدخول</string>
+    <string name="signUp">سجل الان</string>
+    <string name="fullName">الاسم الكامل</string>
+    <string name="phoneNumb">رقم الهاتف</string>
+    <string name="rewritePassword">تاكيد كلمة المرور</string>
+    <string name="saveChanges">احفظ التغييرات</string>
+
+    <string name="emailIconDesc">Email Icon</string>
+    <string name="passIconDesc">Password Icon</string>
+    <string name="personIconDesc">Person Icon</string>
+    <string name="phoneIconDesc">Phone Icon</string>
+    <string name="cameraIconDesc">camera Icon</string>
+    <string name="circleCameraIconDesc">Email Icon</string>
+
+    <string name="myAccount">حسابي</string>
+    <string name="myPosts">منشوراتي</string>
+    <string name="savedPosts">المحفوظات</string>
+    <string name="shareApp">شارك التطبيق</string>
+    <string name="supportUs">ادعمنا</string>
+    <string name="signOut">تسجيل خروج</string>
+
+    <string name="errorLessNo">لقد ادخلت اقل من 11 رقم في خانة رقم الهاتف </string>
+
+    <string name="navigation_drawer_open">Open Navigation Drawer</string>
+    <string name="navigation_drawer_close">Close Navigation Drawer</string>
+
+    <string name="APIs_Map_Key"> AIzaSyDXJzLT4gTwIMiiw06Vau1_MJQBNEpYsHM</string>
+    <string name="homePage">الصفحة الرئيسية</string>
+    <string name="addInfo">اضف</string>
+    <string name="theLocation">الموقع</string>
+    <string name="call">اتصل</string>
+    <string name="delete">احذف</string>
+    <string name="edit">عدل</string>
+    <string name="loading">Loading…</string>
+    <string name="verify_message_sent">سوف يتم ارسال رقم التحقق الخاص برقم الهاتف</string>
+    <string name="verify_code">رمز التحقق</string>
+    <string name="verify">تحقق</string>
+    <string name="first_name">الاسم الاول</string>
+    <string name="last_name">الاسم الاخير</string>
+    <string name="stars">******</string>
+    <string name="update_info">حدث البيانات</string>
+    <string name="write_here">اكتب هنا</string>
+    <string name="add_photo">add photo</string>
+    <string name="click_to_add_Phone">اضغط على الايقونة لادخال رقم الهاتف</string>
+    <string name="click_to_add_location">اضغط على الايقونة لاضافة الموقع</string>
+    <string name="no_posts_to_show">لا يوجد منشور لعرضه</string>
+
+</resources>

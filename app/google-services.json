@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "619734871710",
+    "firebase_url": "https://imhuman-232f2.firebaseio.com",
+    "project_id": "imhuman-232f2",
+    "storage_bucket": "imhuman-232f2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619734871710:android:adc96bee750eca1867d58f",
+        "android_client_info": {
+          "package_name": "com.example.imhumman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619734871710-b0adimipocqj3bfu980mc4bhf6q6j4ot.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWWL02mcWvyIqxpMF8WonbqvycaVznMq8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619734871710-b0adimipocqj3bfu980mc4bhf6q6j4ot.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
