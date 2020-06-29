@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view"
+
+    >
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/navUserProfile"
+            android:icon="@drawable/myaccounticon"
+            android:title="@string/signIn" />
+        <item
+            android:id="@+id/navMyPost"
+            android:icon="@drawable/mypostsicon"
+            android:title="@string/signUpNow" />
+    </group>
+
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/shareApp"
+                android:icon="@drawable/shareicon"
+                android:title="@string/shareApp" />
+            <item
+                android:id="@+id/supportApp"
+                android:icon="@drawable/staricon"
+                android:title="@string/supportUs" />
+
+        </menu>
+    </item>
+
+</menu>

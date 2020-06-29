@@ -1,9 +1,10 @@
 package com.example.imhumman;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,7 +18,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class UpdateUserInfo {
+class UpdateUserInfo {
     private UserProfileChangeRequest profileUpdates;
     private FirebaseUser currentUser;
     private Context mContext;
@@ -72,30 +73,37 @@ public class UpdateUserInfo {
                 });
     }
 
-    public void updatePassword(String password, final String email) {
-        currentUser.updatePassword(password)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(mContext, "password updated", Toast.LENGTH_SHORT).show();
-                            sendPasswordRestEmail(email);
-                        }
-                    }
-                });
-    }
-
-    private void sendPasswordRestEmail(String email) {
+    void updatePassword(String email, final ProgressBar progressBar) {
+        progressBar.setVisibility(View.VISIBLE);
         FirebaseAuth auth = FirebaseAuth.getInstance();
         auth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(mContext, "password rest sent", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
+                        if (task.isSuccessful()) {
+                            Toast.makeText(mContext, "تم ارسال ايميل يمكنك من تغيير الباسورد", Toast.LENGTH_LONG).show();
+                            //updateUserPassword(email,password);
+                        } else {
+                            Toast.makeText(mContext, "فشلت عملية ارسال ايميل لتغيير الباسورد , يرجى المحاولة مرة اخرى", Toast.LENGTH_LONG).show();
+                        }
 
                     }
                 });
     }
+
+/*    private void updateUserPassword(String email,String password) {
+        currentUser.updatePassword(password)
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(mContext, "password updated", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+    }*/
 
     void updatePhoneNumber(PhoneAuthCredential phoneNumberCredential) {
         currentUser.updatePhoneNumber(phoneNumberCredential).addOnCompleteListener(new OnCompleteListener<Void>() {

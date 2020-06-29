@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".AllPostsActivity"
+    android:layoutDirection="rtl"
     tools:openDrawer="start">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -105,6 +106,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+
         app:headerLayout="@layout/nav_header"
         app:itemIconTint="@color/colorPrimary"
         app:menu="@menu/nav_menu" />

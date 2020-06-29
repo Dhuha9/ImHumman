@@ -1,12 +1,14 @@
 <resources>
     <string name="app_name"> انا انسان</string>
     <string name="passwordForgetQuestion">هل نسيت كلمة المرور ؟</string>
-    <string name="signUpNow">سجل الان !</string>
+    <string name="signUpNowWithExclamationMark">سجل الان !</string>
     <string name="email">البريد الالكتروني</string>
     <string name="password">كلمة المرور</string>
     <string name="doYouHaveAccount">هل لديك حساب ؟</string>
     <string name="signIn">تسجيل الدخول</string>
-    <string name="signUp">سجل الان</string>
+    <string name="signUpNow">سجل الان</string>
+    <string name="signUp">تسجيل حساب</string>
+
     <string name="fullName">الاسم الكامل</string>
     <string name="phoneNumb">رقم الهاتف</string>
     <string name="rewritePassword">تاكيد كلمة المرور</string>
@@ -51,5 +53,18 @@
     <string name="click_to_add_Phone">اضغط على الايقونة لادخال رقم الهاتف</string>
     <string name="click_to_add_location">اضغط على الايقونة لاضافة الموقع</string>
     <string name="no_posts_to_show">لا يوجد منشور لعرضه</string>
+    <string name="add_cureent_location">اضف الموقع الحالي</string>
+    <string name="main_page_title">الصفحة الرئيسية</string>
+    <string name="aboutApp">عن التطبيق</string>
+    <string name="aboutInitiative">عن المبادرة</string>
+    <string name="aboutInitiativetext">هي مبادرة إنسانية غير ربحية تهدف الى خدمة المجتمع عن طريق البرمجة. وتعتبر مبادرة تعليمية حقيقية ترعى المهتمين بتعلم تصميم وبرمجة تطبيقات الهاتف الجوال ومواقع الانترنيت وبرامج الحاسوب والشبكات والاتصالات ونظم تشغيل الحاسوب باستخدام تقنيات مفتوحة المصدر، كما توفر لهم جميع الدروس التعليمية اللازمة وبشكل مجاني تماما. والأهم من ذلك تعتمد المبادرة على مبدأ المواطنة والمشاركة الفاعلة في تأسيس وبناء المجتمع. لذا تدعو المبادرة جميع الطلبة والخريجين والهواة والأساتذة الجامعيين والمهتمين في مجال البرمجة وتقنيات المعلومات وكذلك الاختصاصات الأخرى الى التطور والمشاركة الفعلية لأجل الارتقاء بواقع البلد حيث تعتبر هذه فرصة عظيمة لاكتساب الخبرة والمهارة عن طريق تصميم وتنفيذ برامج وتطبيقات خدمية من شأنها خدمة المواطن وذلك ضمن مجاميع عمل نشطة وفعالة يتعاون فيها جميع الافراد كفريق واحد، يتبادل الآراء والخبرات ويطرح الأفكار لتتم مناقشتها وتطبيقها على ارض الواقع. كما تفتح المجال لجميع المواطنين العراقيين ومن جميع الاختصاصات الى المشاركة الفعالة في هذه المشاريع لرفد الفريق بالخبرات والأفكار والآراء والمقترحات التي من شأنها خدمة المجتمع بأفضل ما يمكن.</string>
+    <string name="programmer">المبرمجة ضحى حسن</string>
+    <string name="supervisor">مدير المشروع  اسامة اسماعيل عواد</string>
+    <string name="founder">مؤسس المبادرة محمد عيسى حميد</string>
+    <string name="location">الموقع</string>
+    <string name="code_for_iraq">البرمجة لأجل العراق  Code for Iraq</string>
+    <string name="reset_password_sentence">ادخل الايميل الخاص بحسابك في الحقل ادناه ليتم ارسال اليه كيفية تغيير الباسورد</string>
+    <string name="send">ارسال</string>
+    <string name="click_here_to_add_image">انقر هنا لاضافة صورة</string>
 
 </resources>

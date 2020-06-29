@@ -2,6 +2,7 @@ package com.example.imhumman;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -53,6 +54,8 @@ public class MyPostsActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     TextView nothingToShow;
     ProgressBar progressBar, footerProgressBar;
+    Query query;
+    NavBarHandler navBarHandler;
 
     //private boolean shouldLoadMore;
     FirebaseAuth.AuthStateListener firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -60,70 +63,66 @@ public class MyPostsActivity extends AppCompatActivity {
         public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
             mAuth = firebaseAuth;
             currentUser = mAuth.getCurrentUser();
-            displayHeaderImageAndUserName();
+            addDrawer();
         }
     };
-    private NavigationView.OnNavigationItemSelectedListener navigationSelectListener = new NavigationView.OnNavigationItemSelectedListener() {
+    ChildEventListener childEventListener = new ChildEventListener() {
         @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            if (dataSnapshot.getValue() != null) {
+                PostDataModel postData = dataSnapshot.getValue(PostDataModel.class);
+                progressBar.setVisibility(View.GONE);
+                nothingToShow.setVisibility(View.GONE);
 
-            int id = menuItem.getItemId();
-            switch (id) {
-                case R.id.signOut:
-                    FirebaseAuth.getInstance().signOut();
-                    mAuth.addAuthStateListener(firebaseAuthListener);
-                    Intent signOutIntent = new Intent(MyPostsActivity.this, SignInActivity.class);
-                    startActivity(signOutIntent);
-                    return true;
-                case R.id.navHome:
-                    if (currentUser == null) {
-                        youShouldSignIn();
-                    } else {
-                        Intent homeIntent = new Intent(MyPostsActivity.this, AllPostsActivity.class);
-                        startActivity(homeIntent);
-                    }
-                    return true;
-
-                case R.id.navUserProfile:
-                    if (currentUser == null) {
-                        youShouldSignIn();
-                    } else {
-                        Intent userProfileIntent = new Intent(MyPostsActivity.this, UserProfileActivity.class);
-                        startActivity(userProfileIntent);
-                    }
-                    return true;
-                case R.id.navMyPost:
-                    if (currentUser == null) {
-                        youShouldSignIn();
-                    } else {
-                        Intent myPostsIntent = new Intent(MyPostsActivity.this, MyPostsActivity.class);
-                        startActivity(myPostsIntent);
-                    }
-                    return true;
-
-                case R.id.navSavedPosts:
-                    if (currentUser == null) {
-                        youShouldSignIn();
-                    } else {
-                        Intent savedPostsIntent = new Intent(MyPostsActivity.this, SavedPostsActivity.class);
-                        startActivity(savedPostsIntent);
-                    }
-                    return true;
+                postsList.add(0, postData);
+                mRecyclerView.setHasFixedSize(true);
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                mRecyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
             }
+        }
 
-            return true;
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            PostDataModel postData = dataSnapshot.getValue(PostDataModel.class);
+
+            for (int i = 0; i < postsList.size(); i++) {
+                if (postsList.get(i).getPostId().equals(postData.getPostId())) {
+                    postsList.set(i, postData);
+                    mAdapter.notifyItemChanged(i);
+
+                }
+            }
+        }
+
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            PostDataModel postData = dataSnapshot.getValue(PostDataModel.class);
+
+            for (int i = 0; i < postsList.size(); i++) {
+                if (postsList.get(i).getPostId().equals(postData.getPostId())) {
+                    postsList.remove(i);
+                    mAdapter.notifyItemRemoved(i);
+
+
+                }
+            }
+        }
+
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
         }
     };
-
-    private void youShouldSignIn() {
-        Toast.makeText(MyPostsActivity.this, "يرجى تسجيل الدخول اولا", Toast.LENGTH_SHORT).show();
-        Intent signInIntent = new Intent(MyPostsActivity.this, SignInActivity.class);
-        startActivity(signInIntent);
-    }
 
     public void loadMyPosts() {
         postsList.clear();
-        Query query = postsTable.orderByChild("uid").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query = postsTable.orderByChild("uid").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -139,86 +138,35 @@ public class MyPostsActivity extends AppCompatActivity {
             }
         });
 
-        query.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if (dataSnapshot.getValue() != null) {
-                    PostDataModel postData = dataSnapshot.getValue(PostDataModel.class);
-                    progressBar.setVisibility(View.GONE);
-                    nothingToShow.setVisibility(View.GONE);
-
-                    postsList.add(0, postData);
-                    mRecyclerView.setHasFixedSize(true);
-                    mRecyclerView.setLayoutManager(mLayoutManager);
-                    mRecyclerView.setAdapter(mAdapter);
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                PostDataModel postData = dataSnapshot.getValue(PostDataModel.class);
-
-                for (int i = 0; i < postsList.size(); i++) {
-                    if (postsList.get(i).getPostId().equals(postData.getPostId())) {
-                        postsList.set(i, postData);
-                        mAdapter.notifyItemChanged(i);
-
-                    }
-                }
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                PostDataModel postData = dataSnapshot.getValue(PostDataModel.class);
-
-                for (int i = 0; i < postsList.size(); i++) {
-                    if (postsList.get(i).getPostId().equals(postData.getPostId())) {
-                        postsList.remove(i);
-                        mAdapter.notifyItemRemoved(i);
-
-
-                    }
-                }
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
+        query.addChildEventListener(childEventListener);
 
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.all_posts);
         setToolbar();
-        nothingToShow = findViewById(R.id.txtNothingToshow);
+        addDrawer();
+        getLayoutViews();
+        setFirebaseVariables();
+        addDrawer();
+        manageRecyclerView();
+        loadMyPosts();
+    }
+
+    private void setFirebaseVariables() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         postsTable = mDatabase.child("posts");
         mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
-        progressBar = findViewById(R.id.progressBar);
-
-        addDrawer();
         mAuth.addAuthStateListener(firebaseAuthListener);
-        navigationView = findViewById(R.id.navView);
-        navigationView.setNavigationItemSelectedListener(navigationSelectListener);
+        currentUser = mAuth.getCurrentUser();
+    }
+
+    private void getLayoutViews() {
+        nothingToShow = findViewById(R.id.txtNothingToshow);
+        progressBar = findViewById(R.id.progressBar);
         footerLayout = findViewById(R.id.footerLayout);
-
-        manageRecyclerView();
-
-        loadMyPosts();
-
 
     }
 
@@ -251,39 +199,21 @@ public class MyPostsActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        super.onStop();
+
         if (firebaseAuthListener != null) {
             mAuth.removeAuthStateListener(firebaseAuthListener);
         }
+        postsTable.removeEventListener(childEventListener);
+        super.onStop();
     }
 
     private void addDrawer() {
-        toolbar = findViewById(R.id.toolBar);
         drawer = findViewById(R.id.drawerLayout);
-        displayHeaderImageAndUserName();
-        toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        navigationView = findViewById(R.id.navView);
+        navBarHandler = new NavBarHandler(currentUser, this, mAuth, navigationView, drawer);
+        navBarHandler.addDrawer(toolbar);
 
     }
-
-    private void displayHeaderImageAndUserName() {
-        if (currentUser != null) {
-            navigationView = findViewById(R.id.navView);
-            View headerView = navigationView.getHeaderView(0);
-            final ImageView userImage = headerView.findViewById(R.id.headerDrawerImage);
-            final TextView headerDrawerUserName = headerView.findViewById(R.id.headerDrawerUserName);
-            headerDrawerUserName.setText(currentUser.getDisplayName());
-            Picasso.get()
-                    .load(currentUser.getPhotoUrl())
-                    .fit()
-                    .centerCrop()
-                    .into(userImage);
-        }
-
-    }
-
 
     @Override
     public void onBackPressed() {

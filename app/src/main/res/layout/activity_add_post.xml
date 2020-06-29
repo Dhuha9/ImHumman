@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layoutDirection="ltr">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -30,7 +31,7 @@
             android:id="@+id/addPostProgress"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="409dp"
-            android:layout_height="8dp"
+            android:layout_height="10dp"
             android:indeterminate="true"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/edtContent"
@@ -51,7 +52,6 @@
             android:hint="@string/write_here"
             android:inputType="textMultiLine"
             android:singleLine="false"
-            app:layout_constraintBottom_toTopOf="@+id/guideline35"
             app:layout_constraintEnd_toStartOf="@+id/guideline22"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/guideline27"
@@ -78,8 +78,9 @@
         <TextView
             android:id="@+id/txtAddPhoneNumber"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_height="33dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/edite_text_background"
             android:drawablePadding="8dp"
 
@@ -87,7 +88,7 @@
             android:hint="@string/click_to_add_Phone"
             android:maxLength="11"
             android:textSize="18sp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline46"
+            app:layout_constraintEnd_toStartOf="@+id/icAddPhoneNumber"
             app:layout_constraintStart_toStartOf="@+id/guideline27"
             app:layout_constraintTop_toTopOf="@+id/guideline32" />
 
@@ -96,10 +97,9 @@
             android:id="@+id/icAddPhoneNumber"
             android:layout_width="26dp"
             android:layout_height="28dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="30dp"
             android:src="@drawable/ic_contact_phone_black_24dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline22"
-            app:layout_constraintStart_toStartOf="@+id/guideline46"
             app:layout_constraintTop_toTopOf="@+id/guideline32" />
 
         <TextView
@@ -108,6 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/edite_text_background"
             android:drawablePadding="8dp"
             android:ems="10"
@@ -115,8 +116,7 @@
             android:hint="@string/click_to_add_location"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/guideline34"
-            app:layout_constraintEnd_toStartOf="@+id/guideline46"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintEnd_toStartOf="@+id/icAddLocation"
             app:layout_constraintStart_toStartOf="@+id/guideline27"
             app:layout_constraintTop_toBottomOf="@+id/txtAddPhoneNumber"
             app:layout_constraintVertical_bias="1.0" />
@@ -130,7 +130,6 @@
             android:src="@drawable/ic_add_location"
             app:layout_constraintBottom_toTopOf="@+id/guideline34"
             app:layout_constraintEnd_toStartOf="@+id/guideline22"
-            app:layout_constraintStart_toStartOf="@+id/guideline46"
             app:layout_constraintTop_toBottomOf="@+id/icAddPhoneNumber" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -183,23 +182,18 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.15" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline46"
+        <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.79" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:text="@string/click_here_to_add_image"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
             app:layout_constraintBottom_toBottomOf="@+id/imgAddImagePost"
             app:layout_constraintEnd_toEndOf="@+id/imgAddImagePost"
+            app:layout_constraintHorizontal_bias="0.515"
             app:layout_constraintStart_toStartOf="@+id/imgAddImagePost"
-            app:layout_constraintTop_toTopOf="@+id/imgAddImagePost"
-            app:srcCompat="@drawable/ic_add_image"
-            tools:ignore="VectorDrawableCompat" />
+            app:layout_constraintTop_toTopOf="@+id/imgAddImagePost" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

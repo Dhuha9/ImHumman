@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
 
     android:id="@+id/card_view"
     android:layout_width="match_parent"
@@ -24,8 +23,6 @@
             android:layout_height="21dp"
             android:layout_marginTop="11dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline26"
-            app:layout_constraintEnd_toStartOf="@+id/guideline25"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/guideline30"
             app:layout_constraintTop_toBottomOf="@+id/postLine"
             app:srcCompat="@drawable/shareicon" />
@@ -64,41 +61,36 @@
             android:id="@+id/txtLocation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:drawableStart="@drawable/locationicon"
-            android:drawablePadding="3dp"
-            android:text="الموقع"
+            android:layout_marginEnd="35dp"
+            android:drawablePadding="18dp"
+            android:text="@string/location"
             android:textColor="#695454"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline31"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline28" />
+            app:layout_constraintBottom_toBottomOf="@+id/guideline26"
+            app:layout_constraintEnd_toStartOf="@+id/txtCall" />
+
 
         <TextView
             android:id="@+id/txtCall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:drawableStart="@drawable/callicon"
-            android:drawablePadding="3dp"
-            android:text="اتصل"
+            android:drawablePadding="18dp"
+            android:text="@string/call"
             android:textColor="#695454"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/guideline26"
             app:layout_constraintEnd_toStartOf="@+id/guideline21"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline29" />
 
+            />
 
         <ImageView
             android:id="@+id/saveIcon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toStartOf="@+id/guideline25"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/guideline30"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/notsavedposticon" />
@@ -117,18 +109,16 @@
             app:layout_constraintTop_toBottomOf="@+id/card"
             app:layout_constraintVertical_bias="0.152" />
 
+
         <TextView
             android:id="@+id/txtUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="108dp"
-            android:text="انور محمد علي"
+            android:layout_marginEnd="22dp"
             android:textSize="16sp"
-
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/card"
             app:layout_constraintEnd_toStartOf="@+id/card"
-            app:layout_constraintStart_toStartOf="@+id/guideline25"
             app:layout_constraintTop_toTopOf="@+id/card"
             app:layout_constraintVertical_bias="0.547" />
 
@@ -153,13 +143,6 @@
             app:layout_constraintGuide_percent="0.93" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline25"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.15" />
-
-        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline26"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -168,32 +151,11 @@
             app:layout_constraintGuide_percent="0.95" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline28"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline29"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.75" />
-
-        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline30"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.07" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline31"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.70" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

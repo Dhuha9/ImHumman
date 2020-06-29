@@ -32,7 +32,20 @@
             android:queryHint="Search..."
 
             />
+
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/mapProgress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/map"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header" />
 
     <fragment
         android:id="@+id/map"
@@ -41,25 +54,35 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@id/btnAddLatLong"
         app:layout_constraintTop_toBottomOf="@id/header"
-        tools:context="com.example.imhumman.MapActivity" />
+        app:layout_constraintVertical_bias="0.0"
+        tools:context="com.example.imhumman.MapActivity"
+        tools:layout_editor_absoluteX="-34dp" />
 
     <Button
         android:id="@+id/btnAddLatLong"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/rounded_corners_green"
-        android:text="اضف الموقع الحالي"
+        android:padding="15dp"
         android:textColor="#fff"
         android:textSize="24sp"
         android:textStyle="bold"
-
+        android:text="@string/add_cureent_location"
         app:layout_constraintBottom_toTopOf="@id/guideline39"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline38"
         app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_refresh"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/map"
+        app:layout_constraintTop_toBottomOf="@id/header" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline37"

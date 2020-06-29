@@ -2,16 +2,10 @@ package com.example.imhumman;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.imhumman.firebaseModels.PostDataModel;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +29,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,21 +58,22 @@ public class AllPostsActivity extends AppCompatActivity {
     NavigationView navigationView;
     ProgressBar progressBar, footerProgressBar;
     TextView nothingToShow;
-
+    NavBarHandler navBarHandler;
 
     FirebaseAuth.AuthStateListener firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
         @Override
         public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
             mAuth = firebaseAuth;
             currentUser = mAuth.getCurrentUser();
-            displayHeaderImageAndUserName();
+            Toast.makeText(AllPostsActivity.this, "user " + currentUser, Toast.LENGTH_SHORT).show();
+            addDrawer();
         }
     };
-    ChildEventListener childEventListener = new ChildEventListener() {
 
+    ChildEventListener childEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            //Toast.makeText(AllPostsActivity.this, "llss "+postsList, Toast.LENGTH_LONG).show();
+            Toast.makeText(AllPostsActivity.this, "sss" + s, Toast.LENGTH_LONG).show();
             if (dataSnapshot.getValue() != null) {
                 PostDataModel postData = dataSnapshot.getValue(PostDataModel.class);
                 if (postData != null) {
@@ -87,13 +82,15 @@ public class AllPostsActivity extends AppCompatActivity {
                     if (footerProgressBar != null) {
                         footerProgressBar.setVisibility(View.GONE);
                     }
+                    String post = tempPostsList.get(0).getContent();
+                    Toast.makeText(AllPostsActivity.this, "post " + post, Toast.LENGTH_LONG).show();
                     if (tempPostsList.size() == postsPerPage) {
+
                         lastId = tempPostsList.get(0).getPostId();
                         Collections.reverse(tempPostsList);
                         if (!first) {
                             tempPostsList.remove(0);
                         }
-
 
                         progressBar.setVisibility(View.GONE);
                         nothingToShow.setVisibility(View.GONE);
@@ -104,6 +101,9 @@ public class AllPostsActivity extends AppCompatActivity {
 
                     }
                 }
+
+            } else {
+                Toast.makeText(AllPostsActivity.this, "null post", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -118,7 +118,6 @@ public class AllPostsActivity extends AppCompatActivity {
 
                 }
             }
-
         }
 
         @Override
@@ -129,12 +128,8 @@ public class AllPostsActivity extends AppCompatActivity {
                 if (postsList.get(i).getPostId().equals(postData.getPostId())) {
                     postsList.remove(i);
                     mAdapter.notifyItemRemoved(i);
-
-
                 }
-
             }
-
         }
 
         @Override
@@ -152,79 +147,38 @@ public class AllPostsActivity extends AppCompatActivity {
         public void onClick(View view) {
             mAuth.addAuthStateListener(firebaseAuthListener);
             if (currentUser != null) {
+                currentUser.reload().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        if (currentUser.isEmailVerified()) {
+                            Intent intent = new Intent(AllPostsActivity.this, AddPostActivity.class);
+                            //   intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(AllPostsActivity.this, "يجب مراجعة البريد الالكتروني لاتمام عملية تسجيل الدخول", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
 
-                Intent intent = new Intent(AllPostsActivity.this, AddPostActivity.class);
-                //   intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                startActivity(intent);
+
             } else {
                 Intent intent = new Intent(AllPostsActivity.this, SignInActivity.class);
                 startActivity(intent);
             }
         }
     };
-    private NavigationView.OnNavigationItemSelectedListener navigationSelectListener = new NavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-            drawer.closeDrawer(GravityCompat.START);
-            int id = menuItem.getItemId();
-            switch (id) {
-                case R.id.signOut:
-                    FirebaseAuth.getInstance().signOut();
-                    mAuth.addAuthStateListener(firebaseAuthListener);
-                    Intent signOutIntent = new Intent(AllPostsActivity.this, SignInActivity.class);
-                    signOutIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    startActivity(signOutIntent);
-                    return true;
-                case R.id.navHome:
-                    if (currentUser == null) {
-                        youShouldSignIn();
-                    } else {
-                        Intent homeIntent = new Intent(AllPostsActivity.this, AllPostsActivity.class);
-                        // userProfileIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        startActivity(homeIntent);
-                    }
-                    return true;
-                case R.id.navUserProfile:
-                    if (currentUser == null) {
-                        youShouldSignIn();
-                    } else {
-                        Intent userProfileIntent = new Intent(AllPostsActivity.this, UserProfileActivity.class);
-                        // userProfileIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        startActivity(userProfileIntent);
-                    }
-                    return true;
-                case R.id.navMyPost:
-                    if (currentUser == null) {
-                        youShouldSignIn();
-                    } else {
-                        Intent myPostsIntent = new Intent(AllPostsActivity.this, MyPostsActivity.class);
-                        myPostsIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        startActivity(myPostsIntent);
-                    }
-                    return true;
 
-                case R.id.navSavedPosts:
-                    if (currentUser == null) {
-                        youShouldSignIn();
-                    } else {
-                        Intent savedPostsIntent = new Intent(AllPostsActivity.this, SavedPostsActivity.class);
-                        savedPostsIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        startActivity(savedPostsIntent);
-                    }
-                    return true;
-            }
-
-            return true;
-        }
-    };
     private RecyclerView.OnScrollListener showPages = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
             if (dy > 0) {
-                //Toast.makeText(AllPostsActivity.this, "scroll", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AllPostsActivity.this, "scroll", Toast.LENGTH_SHORT).show();
                 totalItemCount = mLayoutManager.getItemCount();
                 int lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
+                int f = postsPerPage + lastVisibleItemPosition;
+                Toast.makeText(AllPostsActivity.this, "num post2 " + totalItemCount + " f " + f + " loading " + isLoading, Toast.LENGTH_SHORT).show();
+
                 if (!isLoading && totalItemCount <= (postsPerPage + lastVisibleItemPosition)) {
 
                     footerProgressBar.setVisibility(View.VISIBLE);
@@ -236,12 +190,6 @@ public class AllPostsActivity extends AppCompatActivity {
         }
     };
 
-    private void youShouldSignIn() {
-        Toast.makeText(AllPostsActivity.this, "يرجى تسجيل الدخول اولا", Toast.LENGTH_SHORT).show();
-        Intent signInIntent = new Intent(AllPostsActivity.this, SignInActivity.class);
-        signInIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(signInIntent);
-    }
 
     public void loadFirstPageOfPosts() {
         first = true;
@@ -254,37 +202,59 @@ public class AllPostsActivity extends AppCompatActivity {
 
     }
 
+    ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                if (dataSnapshot.getValue() != null) {
+                    savedPostsList.add(ds.getValue().toString());
+                }
+            }
+            int dataCount = (int) dataSnapshot.getChildrenCount();
+            if (savedPostsList.size() == dataCount) {
+                manageRecyclerView();
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.all_posts);
         setToolbar();
         addDrawer();
+        getLayoutViews();
+        setFirebaseVariables();
+        checkUserToStart();
+        lastId = "";
+    }
+
+    private void getLayoutViews() {
         nothingToShow = findViewById(R.id.txtNothingToshow);
-        navigationView = findViewById(R.id.navView);
-        navigationView.setNavigationItemSelectedListener(navigationSelectListener);
         FBtn = findViewById(R.id.floatingActionButton);
         FBtn.show();
         FBtn.setOnClickListener(FBtnClick);
         footerProgressBar = findViewById(R.id.footerProgressBar);
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void setFirebaseVariables() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         postsTable = mDatabase.child("posts");
         savedPostTable = mDatabase.child("savedPost");
         mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
-        checkUserToStart();
-
         mAuth.addAuthStateListener(firebaseAuthListener);
-        lastId = "";
-
+        currentUser = mAuth.getCurrentUser();
     }
 
-    private void setToolbar() {
-        toolbar = findViewById(R.id.toolBar);
-        setSupportActionBar(toolbar);
-    }
 
     private void checkUserToStart() {
         if (currentUser == null) {
@@ -294,32 +264,17 @@ public class AllPostsActivity extends AppCompatActivity {
         }
     }
 
+    private void setToolbar() {
+        toolbar = findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) getSupportActionBar().setTitle(R.string.main_page_title);
+    }
+
     private void getSavedPosts() {
         savedPostsList.clear();
 
-        savedPostTable.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    if (dataSnapshot.getValue() != null) {
-                        savedPostsList.add(ds.getValue().toString());
-                    }
-                }
-                int dataCount = (int) dataSnapshot.getChildrenCount();
-                if (savedPostsList.size() == dataCount) {
-                    manageRecyclerView();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        savedPostTable.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(valueEventListener);
     }
-
 
     private void manageRecyclerView() {
 
@@ -339,13 +294,12 @@ public class AllPostsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(firebaseAuthListener);
-
     }
 
     @Override
     protected void onRestart() {
-        super.onRestart();
 
+        super.onRestart();
         mAuth.addAuthStateListener(firebaseAuthListener);
 
         mAdapter.notifyDataSetChanged();
@@ -353,10 +307,13 @@ public class AllPostsActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        super.onStop();
         if (firebaseAuthListener != null) {
             mAuth.removeAuthStateListener(firebaseAuthListener);
+
         }
+        postsTable.removeEventListener(childEventListener);
+        savedPostTable.removeEventListener(valueEventListener);
+        super.onStop();
     }
 
     @Override
@@ -364,31 +321,12 @@ public class AllPostsActivity extends AppCompatActivity {
         super.onPause();
     }
 
+
     private void addDrawer() {
         drawer = findViewById(R.id.drawerLayout);
-        displayHeaderImageAndUserName();
-        toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-    }
-
-    private void displayHeaderImageAndUserName() {
-
-        if (currentUser != null) {
-            navigationView = findViewById(R.id.navView);
-            View headerView = navigationView.getHeaderView(0);
-            final ImageView userImg = headerView.findViewById(R.id.headerDrawerImage);
-            final TextView headerDrawerUserName = headerView.findViewById(R.id.headerDrawerUserName);
-            headerDrawerUserName.setText(currentUser.getDisplayName());
-            Picasso.get()
-                    .load(currentUser.getPhotoUrl())
-                    .fit()
-                    .centerCrop()
-                    .into(userImg);
-        }
-
+        navigationView = findViewById(R.id.navView);
+        navBarHandler = new NavBarHandler(currentUser, this, mAuth, navigationView, drawer);
+        navBarHandler.addDrawer(toolbar);
     }
 
 

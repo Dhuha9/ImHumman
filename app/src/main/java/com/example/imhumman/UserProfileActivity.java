@@ -84,10 +84,10 @@ public class UserProfileActivity extends AppCompatActivity implements Fragment.d
                     v = txtPhoneNumberProfile;
                     infoToEdit = txtPhoneNumberProfile.getText().toString();
                     break;
-                case R.id.icPassword:
+              /*  case R.id.icPassword:
                     v = txtPasswordProfile;
                     infoToEdit = txtPasswordProfile.getText().toString();
-                    break;
+                    break;*/
             }
 
             showEditDialog();
@@ -108,40 +108,42 @@ public class UserProfileActivity extends AppCompatActivity implements Fragment.d
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
         setToolbar();
-        databaseRef = FirebaseDatabase.getInstance().getReference();
-        usersTable = databaseRef.child("users");
-        postsTable = databaseRef.child("posts");
+        setFirebaseVariables();
+        getLayoutViews();
+        setListeners();
+        userInfo = new UpdateUserInfo(user, UserProfileActivity.this);
+        setUserData();
+    }
 
+    private void getLayoutViews() {
         txtNameProfile = findViewById(R.id.txtNameProfile);
         txtEmailProfile = findViewById(R.id.txtEmailProfile);
         txtPhoneNumberProfile = findViewById(R.id.txtPhoneNumberProfile);
-        txtPasswordProfile = findViewById(R.id.txtPasswordProfile);
-
+        // txtPasswordProfile = findViewById(R.id.txtPasswordProfile);
         icName = findViewById(R.id.icName);
-        icName.setOnClickListener(setEditedInfo);
-
         icEmail = findViewById(R.id.icEmail);
-        icEmail.setOnClickListener(setEditedInfo);
-
-
         icPhoneNumber = findViewById(R.id.icPhoneNumber);
-        icPhoneNumber.setOnClickListener(setEditedInfo);
-
-        icPassword = findViewById(R.id.icPassword);
-        icPassword.setOnClickListener(setEditedInfo);
-
+        // icPassword = findViewById(R.id.icPassword);
         userImage = findViewById(R.id.userImage);
         userImageChanging = findViewById(R.id.userImageChanging);
-        userImageChanging.setOnClickListener(changeUserImage);
-
         btnUpdate = findViewById(R.id.btnUpdate);
+    }
+
+    private void setListeners() {
+        icName.setOnClickListener(setEditedInfo);
+        icEmail.setOnClickListener(setEditedInfo);
+        icPhoneNumber.setOnClickListener(setEditedInfo);
+        //icPassword.setOnClickListener(setEditedInfo);
+        userImageChanging.setOnClickListener(changeUserImage);
         btnUpdate.setOnClickListener(updateUserInfo);
 
+    }
+
+    private void setFirebaseVariables() {
+        databaseRef = FirebaseDatabase.getInstance().getReference();
+        usersTable = databaseRef.child("users");
+        postsTable = databaseRef.child("posts");
         user = FirebaseAuth.getInstance().getCurrentUser();
-        userInfo = new UpdateUserInfo(user, UserProfileActivity.this);
-        setUserData();
-
-
     }
 
     private void setToolbar() {
@@ -297,6 +299,5 @@ public class UserProfileActivity extends AppCompatActivity implements Fragment.d
         dialogFragment.show(getSupportFragmentManager(), "profile");
         btnUpdate.setVisibility(View.VISIBLE);
     }
-
 
 }

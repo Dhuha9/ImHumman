@@ -26,6 +26,7 @@ public class SignUpActivity extends AppCompatActivity {
             sendUserDataToAuthenticate();
         }
     };
+
     View.OnClickListener imgSelecting = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -42,7 +43,10 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         setToolbar();
+        getLayoutViews();
+    }
 
+    private void getLayoutViews() {
         edtFirstName = findViewById(R.id.edtFirstName);
         edtLastName = findViewById(R.id.edtLastName);
         edtPassword = findViewById(R.id.edtPassword);
@@ -54,8 +58,6 @@ public class SignUpActivity extends AppCompatActivity {
 
         btnSignUp = findViewById(R.id.btnSignUp);
         btnSignUp.setOnClickListener(signUpListener);
-
-
     }
 
     private void setToolbar() {
@@ -84,9 +86,13 @@ public class SignUpActivity extends AppCompatActivity {
         String password = edtPassword.getText().toString();
         String reEnteredPassword = edtRePassword.getText().toString();
 
-        if (phoneNO.length() < 10 || password.length() < 4 || !password.equals(reEnteredPassword) || firstName.isEmpty() || lastName.isEmpty()) {
+        if (phoneNO.length() < 10 || password.length() < 8 || !password.equals(reEnteredPassword) || firstName.isEmpty() || lastName.isEmpty()) {
 
-            if (phoneNO.length() < 10) {
+            if (email.isEmpty()) {
+                edtEmail.setError("يجب كتابة الايميل");
+            }
+
+            if (phoneNO.length() < 11) {
                 edtUserPhoneNumber.setError("رقم الهاتف اقل من 11 رقم");
             }
             if (password.length() < 8) {
@@ -94,7 +100,6 @@ public class SignUpActivity extends AppCompatActivity {
             }
             if (!password.equals(reEnteredPassword)) {
                 edtRePassword.setError("غير مطابق لحقل الباسورد اعلاه");
-                //dialog showing error
             }
             if (firstName.isEmpty()) {
                 edtFirstName.setError("يجب ادخال الاسم كاملا");

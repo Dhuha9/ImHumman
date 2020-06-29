@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,11 +38,13 @@ import com.google.firebase.storage.UploadTask;
 import java.util.concurrent.TimeUnit;
 
 public class PhoneAndEmailAuthActivity extends AppCompatActivity {
-    String verificationId;
+    String verificationId = "", phoneNumber, email, password, fullName;
     FirebaseAuth mAuth;
-    EditText edt_verificationCode;
-    Button btn_verify;
-    ProgressBar progressBar;
+    EditText edtVerificationCode;
+    Button btnPhoneVerify, btnEmailVerify, btnEmailResend;
+    ImageView checkMarkForPhone, checkMarkForEmail;
+    TextView txtPhoneNumber, txtEmail;
+    ProgressBar progressBarForPhone, progressBarForEmail;
     Intent intent;
     Uri userImgPath = null;
     Uri userImgUri;
@@ -48,13 +52,14 @@ public class PhoneAndEmailAuthActivity extends AppCompatActivity {
     DatabaseReference userTable;
     boolean isPhoneNumberVerified = false;
     boolean isFromUserProfile = false;
+    boolean isEmailVerified = false;
 
     private View.OnClickListener verifyCodeListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            String code = edt_verificationCode.getText().toString();
+            String code = edtVerificationCode.getText().toString();
             if (code.isEmpty() || code.length() < 6) {
-                edt_verificationCode.setError("الرمز غير كامل");
+                edtVerificationCode.setError("الرمز غير كامل");
             } else {
                 verifyCode(code);
             }
@@ -76,7 +81,7 @@ public class PhoneAndEmailAuthActivity extends AppCompatActivity {
 
             String code = phoneAuthCredential.getSmsCode();
             if (code != null) {
-                edt_verificationCode.setText(code);
+                edtVerificationCode.setText(code);
                 verifyCode(code);
                 Toast.makeText(PhoneAndEmailAuthActivity.this, "onVerificationCompleted", Toast.LENGTH_LONG).show();
 
@@ -89,34 +94,66 @@ public class PhoneAndEmailAuthActivity extends AppCompatActivity {
         }
     };
 
+    private View.OnClickListener resendVerificationEmail = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            emailVerification();
+        }
+    };
+
+    private View.OnClickListener verifyEmailListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            progressBarForEmail.setVisibility(View.VISIBLE);
+            mAuth.getCurrentUser().reload().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().isEmailVerified()) {
+                        isEmailVerified = true;
+                        progressBarForEmail.setVisibility(View.GONE);
+                        checkMarkForEmail.setVisibility(View.VISIBLE);
+                        signInUser();
+                    } else {
+                        Toast.makeText(PhoneAndEmailAuthActivity.this, "لم يتم التحقق بنجاح يرجى مراجعة البريد الالكتروني او اعادة ارساله", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone_authentication);
         setToolbar();
-
-        edt_verificationCode = findViewById(R.id.edtVerificationCode);
-
-        btn_verify = findViewById(R.id.btnVerify);
-        btn_verify.setOnClickListener(verifyCodeListener);
-
-        progressBar = findViewById(R.id.progressBar);
-
+        getLayoutViews();
+        setLayoutViews();
         intent = getIntent();
-
         mAuth = FirebaseAuth.getInstance();
+        checkActivityAndGetData();
 
-        sendVerificationCode(getPhoneNumberFromExtras());
+    }
 
-        if (getCallingActivity() != null) {
+    private void getLayoutViews() {
+        edtVerificationCode = findViewById(R.id.edtVerificationCode);
+        txtPhoneNumber = findViewById(R.id.txtPhoneNumber);
+        txtEmail = findViewById(R.id.txtEmail);
+        progressBarForEmail = findViewById(R.id.progressBarForEmail);
+        progressBarForPhone = findViewById(R.id.progressBarForPhone);
+        checkMarkForPhone = findViewById(R.id.checkMarkForPhone);
+        checkMarkForEmail = findViewById(R.id.checkMarkForEmail);
+        btnPhoneVerify = findViewById(R.id.btnPhoneVerify);
+        btnEmailVerify = findViewById(R.id.btnEmailVerify);
+        btnEmailResend = findViewById(R.id.btnEmailResend);
 
-            if (getCallingActivity().getClassName().equals(UserProfileActivity.class.getName())) {
-                Intent intent = getIntent();
-                String phoneNumber = intent.getExtras().getString("phoneNumber");
-                isFromUserProfile = true;
-                sendVerificationCode(phoneNumber);
-            }
-        }
+    }
+
+    private void setLayoutViews() {
+
+        btnPhoneVerify.setOnClickListener(verifyCodeListener);
+        btnEmailVerify.setOnClickListener(verifyEmailListener);
+        btnEmailResend.setOnClickListener(resendVerificationEmail);
     }
 
     private void setToolbar() {
@@ -124,16 +161,145 @@ public class PhoneAndEmailAuthActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    private String getPhoneNumberFromExtras() {
-
-        if (intent.getExtras() != null) {
-            return intent.getExtras().getString("phoneNumber");
-
+    private void checkActivityAndGetData() {
+        Toast.makeText(this, "getCallingActivity() " + getCallingActivity(), Toast.LENGTH_SHORT).show();
+        if (getCallingActivity() != null) {
+            if (getCallingActivity().getClassName().equals(UserProfileActivity.class.getName())) {
+                String phoneNumber = intent.getExtras() != null ? intent.getExtras().getString("phoneNumber") : null;
+                isFromUserProfile = true;
+                if (phoneNumber != null) sendVerificationCode(phoneNumber);
+            }
         } else {
-            return "nothing";
+            Toast.makeText(this, "from sign up", Toast.LENGTH_SHORT).show();
+            getSignUpExtras();
         }
     }
 
+    private void getSignUpExtras() {
+
+        if (intent.getExtras() != null) {
+            phoneNumber = intent.getExtras().getString("phoneNumber");
+            fullName = intent.getExtras().getString("fullName");
+            email = intent.getExtras().getString("email");
+            password = intent.getExtras().getString("password");
+            useExtras();
+        }
+    }
+
+    private void useExtras() {
+        sendVerificationCode(phoneNumber);
+        txtPhoneNumber.setText(phoneNumber);
+        txtEmail.setText(email);
+    }
+
+    private void sendVerificationCode(String phoneNumber) {
+        Toast.makeText(this, "phone " + phoneNumber + " " + phoneNumber.substring(1), Toast.LENGTH_SHORT).show();
+        progressBarForPhone.setVisibility(View.VISIBLE);
+
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                "+964" + phoneNumber.substring(1),
+                60,                 // Timeout duration
+                TimeUnit.SECONDS,   // Unit of timeout
+                this,               // Activity (for callback binding)
+                mCallbacks
+        );
+    }
+
+
+    private void verifyCode(String code) {
+        if (!verificationId.isEmpty() && !code.isEmpty()) {
+            PhoneAuthCredential phoneCredential = PhoneAuthProvider.getCredential(verificationId, code);
+            checkWhatToDoNext(phoneCredential);
+        }
+    }
+
+    private void checkWhatToDoNext(PhoneAuthCredential phoneCredential) {
+
+        if (isFromUserProfile) {
+            Intent intent = new Intent();
+            intent.putExtra("PhoneNumberCredential", phoneCredential);
+            setResult(RESULT_OK, intent);
+            finish();
+        } else {
+            signInWithCredential(phoneCredential);
+            Toast.makeText(PhoneAndEmailAuthActivity.this, "verifyCode", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void signInWithCredential(PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            isPhoneNumberVerified = true;
+                            progressBarForPhone.setVisibility(View.GONE);
+                            checkMarkForPhone.setVisibility(View.VISIBLE);
+                            linkWithAnotherCredential();
+
+                            Toast.makeText(PhoneAndEmailAuthActivity.this, "signInWithCredential", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(PhoneAndEmailAuthActivity.this, "code not corect" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+
+    private void linkWithAnotherCredential() {
+
+
+        if (email != null && password != null) {
+            AuthCredential credential = EmailAuthProvider.getCredential(email, password);
+//            Toast.makeText(PhoneAndEmailAuthActivity.this, "Credential" + credential, Toast.LENGTH_LONG).show();
+//            Toast.makeText(PhoneAndEmailAuthActivity.this, "auth " + mAuth, Toast.LENGTH_LONG).show();
+//            Toast.makeText(PhoneAndEmailAuthActivity.this, "user " + mAuth.getCurrentUser(), Toast.LENGTH_LONG).show();
+
+            if (mAuth.getCurrentUser() != null) {
+                mAuth.getCurrentUser().linkWithCredential(credential)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(PhoneAndEmailAuthActivity.this, "linkWithAnotherCredential", Toast.LENGTH_LONG).show();
+                                    emailVerification();
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(PhoneAndEmailAuthActivity.this, "email linking error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }
+    }
+
+    private void emailVerification() {
+        if (mAuth.getCurrentUser() != null) {
+
+            mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(PhoneAndEmailAuthActivity.this, "يرجى مراجعة البريد الالكتروني لاكمال عملية تسجيل الدخول", Toast.LENGTH_SHORT).show();
+                        // uploadUserImage();
+                        // signInUser();
+                    }
+                }
+            });
+        }
+    }
+
+    private void signInUser() {
+        if (mAuth.getCurrentUser() != null && isEmailVerified && isPhoneNumberVerified) {
+            uploadUserImage();
+            Intent savedPostsIntent = new Intent(PhoneAndEmailAuthActivity.this, AllPostsActivity.class);
+            savedPostsIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(savedPostsIntent);
+        } else {
+            Toast.makeText(this, "not verified", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void uploadUserImage() {
         if (intent.getData() != null) {
@@ -146,12 +312,12 @@ public class PhoneAndEmailAuthActivity extends AppCompatActivity {
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(PhoneAndEmailAuthActivity.this, "Failed to upload", Toast.LENGTH_LONG).show();
+                    Toast.makeText(PhoneAndEmailAuthActivity.this, "Failed to upload image", Toast.LENGTH_LONG).show();
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(PhoneAndEmailAuthActivity.this, "Successful upload", Toast.LENGTH_LONG).show();
+                    Toast.makeText(PhoneAndEmailAuthActivity.this, "Successful upload image", Toast.LENGTH_LONG).show();
 
                 }
             });
@@ -185,7 +351,7 @@ public class PhoneAndEmailAuthActivity extends AppCompatActivity {
 
         FirebaseUser user = mAuth.getCurrentUser();
         UpdateUserInfo userInfo = new UpdateUserInfo(user, PhoneAndEmailAuthActivity.this);
-        userInfo.updateName(intent.getExtras().getString("fullName"));
+        userInfo.updateName(fullName);
         userInfo.updateImageUri(userImgUri);
         Intent intent = new Intent(PhoneAndEmailAuthActivity.this, AllPostsActivity.class);
         startActivity(intent);
@@ -213,97 +379,18 @@ public class PhoneAndEmailAuthActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, SignUpActivity.class);
 
-    private void sendVerificationCode(String phoneNumber) {
-        progressBar.setVisibility(View.VISIBLE);
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                "+964" + phoneNumber,
-                60,                 // Timeout duration
-                TimeUnit.SECONDS,   // Unit of timeout
-                this,               // Activity (for callback binding)
-                mCallbacks
-        );
-    }
-
-    private void verifyCode(String code) {
-        PhoneAuthCredential phoneCredential = PhoneAuthProvider.getCredential(verificationId, code);
-        if (isFromUserProfile) {
-            Intent intent = new Intent();
-            intent.putExtra("PhoneNumberCredential", phoneCredential);
-            setResult(RESULT_OK, intent);
-            finish();
-        } else {
-            signInWithCredential(phoneCredential);
-            Toast.makeText(PhoneAndEmailAuthActivity.this, "verifyCode", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void signInWithCredential(PhoneAuthCredential credential) {
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            isPhoneNumberVerified = true;
-                            linkWithAnotherCredential();
-
-                            Toast.makeText(PhoneAndEmailAuthActivity.this, "signInWithCredential", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(PhoneAndEmailAuthActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-    }
-
-    private void linkWithAnotherCredential() {
-
-        String email = intent.getExtras().getString("email");
-        String password = intent.getExtras().getString("password");
-
-        if (email != null && password != null) {
-            AuthCredential credential = EmailAuthProvider.getCredential(email, password);
-//            Toast.makeText(PhoneAndEmailAuthActivity.this, "Credential" + credential, Toast.LENGTH_LONG).show();
-//            Toast.makeText(PhoneAndEmailAuthActivity.this, "auth " + mAuth, Toast.LENGTH_LONG).show();
-//            Toast.makeText(PhoneAndEmailAuthActivity.this, "user " + mAuth.getCurrentUser(), Toast.LENGTH_LONG).show();
-
-            mAuth.getCurrentUser().linkWithCredential(credential)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(PhoneAndEmailAuthActivity.this, "linkWithAnotherCredential", Toast.LENGTH_LONG).show();
-
-                                emailVerification();
-                            }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(PhoneAndEmailAuthActivity.this, "error " + e.getMessage(), Toast.LENGTH_LONG).show();
-
-                }
-            });
-        }
-    }
-
-    private void emailVerification() {
-        mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(PhoneAndEmailAuthActivity.this, "يرجى مراجعة البريد الالكتروني لاكمال عملية تسجيل الدخول", Toast.LENGTH_SHORT).show();
-                    uploadUserImage();
-                    signInUser();
-                }
+        if (!isEmailVerified || !isPhoneNumberVerified) {
+            if (mAuth.getCurrentUser() != null) {
+                mAuth.getCurrentUser().delete();
+                startActivity(intent);
+            } else {
+                startActivity(intent);
             }
-        });
-    }
-
-    private void signInUser() {
-        if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().isEmailVerified() && isPhoneNumberVerified) {
-            Intent savedPostsIntent = new Intent(PhoneAndEmailAuthActivity.this, AllPostsActivity.class);
-            savedPostsIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            startActivity(savedPostsIntent);
         }
     }
 }

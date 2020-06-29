@@ -35,13 +35,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:ems="5"
         android:hint="@string/first_name"
         android:inputType="textPersonName"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline16"
+        app:layout_constraintEnd_toStartOf="@+id/icPerson"
         app:layout_constraintStart_toEndOf="@+id/edtLastName"
         app:layout_constraintTop_toTopOf="@+id/guideline18" />
 
@@ -67,13 +67,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="start"
+        android:layout_marginEnd="12dp"
+
         android:ems="10"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline16"
+        app:layout_constraintEnd_toStartOf="@+id/icEmail"
         app:layout_constraintStart_toStartOf="@+id/guideline17"
         app:layout_constraintTop_toBottomOf="@+id/edtFirstName" />
 
@@ -83,14 +83,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="12dp"
+
         android:ems="10"
         android:gravity="start"
         android:hint="@string/phoneNumb"
         android:inputType="phone"
         android:maxLength="11"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline16"
+        app:layout_constraintEnd_toStartOf="@+id/icPhone"
         app:layout_constraintStart_toStartOf="@+id/guideline17"
         app:layout_constraintTop_toBottomOf="@+id/edtEmail" />
 
@@ -100,14 +101,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="12dp"
+
         android:ems="10"
         android:gravity="start"
         android:hint="@string/password"
         android:inputType="textPassword"
         android:maxLength="10"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline16"
+        app:layout_constraintEnd_toStartOf="@+id/icLock"
         app:layout_constraintStart_toStartOf="@+id/guideline17"
         app:layout_constraintTop_toBottomOf="@id/edtUserPhoneNumber" />
 
@@ -117,15 +119,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:gravity="start"
+        android:layout_marginEnd="12dp"
         android:hint="@string/rewritePassword"
         android:inputType="textPassword"
+        android:ems="10"
+        android:gravity="start"
+
         android:maxLength="10"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline19"
-        app:layout_constraintEnd_toStartOf="@+id/guideline16"
+        app:layout_constraintEnd_toStartOf="@+id/icReLock"
         app:layout_constraintStart_toStartOf="@+id/guideline17"
         app:layout_constraintTop_toBottomOf="@+id/edtPassword" />
 
@@ -134,16 +136,16 @@
         android:id="@+id/btnSignUp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/signin_button"
-        android:text="@string/signUp"
+        android:background="@drawable/buttons_background"
+        android:text="@string/signUpNow"
         android:textColor="@android:color/white"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@id/guideline20"
-        app:layout_constraintEnd_toStartOf="@+id/guideline15"
-        app:layout_constraintHorizontal_bias="0.461"
-        app:layout_constraintStart_toStartOf="@+id/guideline17"
-        app:layout_constraintTop_toTopOf="@+id/guideline19"
-        app:layout_constraintVertical_bias="0.533" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline16"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline19"
+        app:layout_constraintTop_toBottomOf="@+id/edtRePassword"
+        app:layout_constraintVertical_bias="0.87" />
 
     <ImageView
         android:id="@+id/icPerson"
@@ -153,7 +155,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/edtFirstName"
         app:layout_constraintEnd_toStartOf="@+id/guideline15"
         app:layout_constraintHorizontal_bias="0.444"
-        app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/edtFirstName"
         app:srcCompat="@drawable/person" />
 
@@ -164,7 +165,6 @@
         android:contentDescription="@string/emailIconDesc"
         app:layout_constraintBottom_toBottomOf="@+id/edtEmail"
         app:layout_constraintEnd_toStartOf="@+id/guideline15"
-        app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/edtEmail"
         app:srcCompat="@drawable/email" />
 
@@ -176,7 +176,6 @@
         android:contentDescription="@string/phoneIconDesc"
         app:layout_constraintBottom_toBottomOf="@+id/edtUserPhoneNumber"
         app:layout_constraintEnd_toStartOf="@+id/guideline15"
-        app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/edtUserPhoneNumber"
         app:srcCompat="@drawable/phone_number" />
 
@@ -187,7 +186,6 @@
         android:contentDescription="@string/passIconDesc"
         app:layout_constraintBottom_toBottomOf="@+id/edtPassword"
         app:layout_constraintEnd_toStartOf="@+id/guideline15"
-        app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/edtPassword"
         app:srcCompat="@drawable/password" />
 
@@ -198,7 +196,6 @@
         android:contentDescription="@string/passIconDesc"
         app:layout_constraintBottom_toBottomOf="@+id/edtRePassword"
         app:layout_constraintEnd_toStartOf="@+id/guideline15"
-        app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/edtRePassword"
         app:srcCompat="@drawable/password" />
 
@@ -214,7 +211,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.74" />
+        app:layout_constraintGuide_percent="0.8" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline17"
@@ -231,18 +228,18 @@
         app:layout_constraintGuide_percent="0.38" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline19"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.80" />
-
-    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

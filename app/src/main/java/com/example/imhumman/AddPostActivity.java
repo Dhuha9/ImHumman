@@ -5,7 +5,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -100,28 +99,39 @@ public class AddPostActivity extends AppCompatActivity implements Fragment.dialo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
         setToolbar();
+        getLayoutViews();
+        setListeners();
+        setFirebaseVariables();
+        checkActivityAndGetData();
+        whatToDo = "AddPostActivity";
+
+    }
+
+
+    private void getLayoutViews() {
+        imgAddImagePost = findViewById(R.id.imgAddImagePost);
+        txtAddPhoneNumber = findViewById(R.id.txtAddPhoneNumber);
+        icAddLocation = findViewById(R.id.icAddLocation);
+        txtAddLocation = findViewById(R.id.txtAddLocation);
+        icAddPhoneNumber = findViewById(R.id.icAddPhoneNumber);
+        edtContent = findViewById(R.id.edtContent);
+        addPostProgress = findViewById(R.id.addPostProgress);
+    }
+
+    private void setListeners() {
+        imgAddImagePost.setOnClickListener(showFileChooser);
+        icAddLocation.setOnClickListener(showMap);
+        icAddPhoneNumber.setOnClickListener(addPhoneNumber);
+
+    }
+
+    private void setFirebaseVariables() {
         databaseRef = FirebaseDatabase.getInstance().getReference();
         postsTable = databaseRef.child("posts");
         postData = new PostDataModel();
-        imgAddImagePost = findViewById(R.id.imgAddImagePost);
-        imgAddImagePost.setOnClickListener(showFileChooser);
+    }
 
-        txtAddPhoneNumber = findViewById(R.id.txtAddPhoneNumber);
-
-        icAddLocation = findViewById(R.id.icAddLocation);
-        icAddLocation.setOnClickListener(showMap);
-
-
-        txtAddLocation = findViewById(R.id.txtAddLocation);
-
-        icAddPhoneNumber = findViewById(R.id.icAddPhoneNumber);
-        icAddPhoneNumber.setOnClickListener(addPhoneNumber);
-
-        edtContent = findViewById(R.id.edtContent);
-
-        addPostProgress = findViewById(R.id.addPostProgress);
-
-        whatToDo = "AddPostActivity";
+    private void checkActivityAndGetData() {
         if (getCallingActivity() != null) {
 
             if (getCallingActivity().getClassName().equals(MyPostsActivity.class.getName())) {
@@ -129,36 +139,38 @@ public class AddPostActivity extends AppCompatActivity implements Fragment.dialo
                 Intent intent = getIntent();
                 postId = intent.getExtras().getString("postId");
                 Map<String, Object> postValues = (Map<String, Object>) intent.getSerializableExtra("map");
-
-                if (postValues != null) {
-                    String contentData = postValues.get("content").toString();
-                    double latitudeData = (double) postValues.get("location_latitude");
-                    double longitudeData = (double) postValues.get("location_longitude");
-                    latLng = new LatLng(latitudeData, longitudeData);
-                    LatLng updatedLocation = new LatLng(latitudeData, longitudeData);
-                    Log.i("ph", "" + postValues);
-                    Log.i("ph", "" + postValues.get("phone_number"));
-
-                    String phoneNumberData = postValues.get("phone_number").toString();
-                    postImageFromIntent = postValues.get("post_photo").toString();
-
-                    Picasso.get()
-                            .load(postImageFromIntent)
-                            .fit()
-                            .centerCrop()
-                            .into(imgAddImagePost);
-
-
-                    edtContent.setText(contentData);
-                    txtAddPhoneNumber.setText(phoneNumberData);
-                    getMapLocation(updatedLocation);
-
-
-                }
+                setViews(postValues);
             }
 
         }
     }
+
+    private void setViews(Map<String, Object> postValues) {
+        if (postValues != null) {
+            String contentData = postValues.get("content").toString();
+            double latitudeData = (double) postValues.get("location_latitude");
+            double longitudeData = (double) postValues.get("location_longitude");
+            latLng = new LatLng(latitudeData, longitudeData);
+            LatLng updatedLocation = new LatLng(latitudeData, longitudeData);
+
+            String phoneNumberData = postValues.get("phone_number").toString();
+            postImageFromIntent = postValues.get("post_photo").toString();
+
+            Picasso.get()
+                    .load(postImageFromIntent)
+                    .fit()
+                    .centerCrop()
+                    .into(imgAddImagePost);
+
+
+            edtContent.setText(contentData);
+            txtAddPhoneNumber.setText(phoneNumberData);
+            getMapLocation(updatedLocation);
+
+
+        }
+    }
+
 
     private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.toolBar);
@@ -299,16 +311,12 @@ public class AddPostActivity extends AppCompatActivity implements Fragment.dialo
                 StorageReference imagePostRef = storage.getReferenceFromUrl(postImageFromIntent);
                 imagePostRef.delete();
             }
-            Log.i("phh", "" + txtAddPhoneNumber.getText());
             String phone = postPhoneNumber == null ? txtAddPhoneNumber.getText().toString() : postPhoneNumber;
-            Log.i("phh2", "" + phone);
 
             PostDataModel postData = new PostDataModel(content, latLng.latitude, latLng.longitude, phone, postImageDownloadUri);
-            Log.i("phPost", "" + postData);
-            Log.i("phPost", "" + postData.getPhone_number());
+
 
             Map<String, Object> postValues = postData.toMap();
-            Log.i("phPost", "" + postValues);
 
             postsTable.child(postId).updateChildren(postValues);
             Toast.makeText(this, "Post Edited successfully", Toast.LENGTH_SHORT).show();
@@ -320,25 +328,29 @@ public class AddPostActivity extends AppCompatActivity implements Fragment.dialo
     }
 
     private void getMapLocation(LatLng latLng) {
-
+        //Locale locale=new Locale("ar_IQ");
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         try {
-            List<Address> listAdressess = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-            if (listAdressess != null && listAdressess.size() > 0) {
+            List<Address> listAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            if (listAddresses != null && listAddresses.size() > 0) {
 
                 //to take part of the list of location info
                 String stringAddress = "";
 
-                if (listAdressess.get(0).getLocality() != null) {
-                    stringAddress += listAdressess.get(0).getLocality() + " ,";
+               /* if (listAddresses.get(0).getLocality() != null) {
+                    stringAddress += listAddresses.get(0).getLocality() + " ,";
                 }
+                if (listAddresses.get(0).getSubLocality() != null) {
+                    stringAddress += listAddresses.get(0).getSubLocality() + " ,";
+                }*/
 
-                if (listAdressess.get(0).getAdminArea() != null) {
-                    stringAddress += listAdressess.get(0).getAdminArea() + " ,";
+                if (listAddresses.get(0).getAdminArea() != null) {
+                    stringAddress += listAddresses.get(0).getAdminArea() + " ,";
                 }
-                if (listAdressess.get(0).getCountryName() != null) {
-                    stringAddress += listAdressess.get(0).getCountryName();
+                if (listAddresses.get(0).getCountryName() != null) {
+                    stringAddress += listAddresses.get(0).getCountryName();
                 }
+                Toast.makeText(this, "add " + listAddresses.get(0).getAddressLine(1) + listAddresses.get(0).getAddressLine(2) + listAddresses.get(0).getSubLocality() + listAddresses.get(0).getSubThoroughfare() + listAddresses.get(0).getSubAdminArea() + listAddresses.get(0).getFeatureName(), Toast.LENGTH_SHORT).show();
 
                 txtAddLocation.setText(stringAddress);
             }

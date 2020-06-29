@@ -5,40 +5,65 @@
 
     >
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/unsignedGroup"
+        android:checkableBehavior="single"
+        android:visible="false">
         <item
             android:id="@+id/navHome"
-            android:icon="@drawable/ic_home2"
+            android:icon="@drawable/ic_action_home"
             android:title="@string/homePage"
-
             />
         <item
             android:id="@+id/navUserProfile"
-            android:icon="@drawable/myaccounticon"
+            android:icon="@drawable/ic_action_account_circle"
             android:title="@string/myAccount" />
         <item
             android:id="@+id/navMyPost"
-            android:icon="@drawable/mypostsicon"
+            android:icon="@drawable/ic_action_send"
             android:title="@string/myPosts" />
         <item
             android:id="@+id/navSavedPosts"
-            android:icon="@drawable/saved_posts_icon"
+            android:icon="@drawable/ic_action_bookmark"
             android:title="@string/savedPosts" />
+    </group>
+
+    <group
+        android:id="@+id/signedGroup"
+        android:checkableBehavior="single"
+        android:visible="false">
+
+        <item
+            android:id="@+id/navSignIn"
+            android:icon="@drawable/ic_action_exit_to_app"
+            android:title="@string/signIn" />
+        <item
+            android:id="@+id/navSignUp"
+            android:icon="@drawable/ic_action_person_add"
+            android:title="@string/signUp" />
     </group>
 
     <item android:title="">
         <menu>
             <item
+                android:id="@+id/aboutUs"
+                android:icon="@drawable/ic_im_human"
+                android:title="@string/aboutApp" />
+            <item
+                android:id="@+id/aboutInitiative"
+                android:icon="@drawable/ic_cfi"
+                android:title="@string/aboutInitiative" />
+            <item
                 android:id="@+id/shareApp"
-                android:icon="@drawable/shareicon"
+                android:icon="@drawable/ic_action_share"
                 android:title="@string/shareApp" />
             <item
                 android:id="@+id/supportApp"
-                android:icon="@drawable/staricon"
+                android:icon="@drawable/ic_action_star"
                 android:title="@string/supportUs" />
             <item
                 android:id="@+id/signOut"
-                android:icon="@drawable/signouticon"
+                android:icon="@drawable/ic_action_power_settings_new"
                 android:title="@string/signOut" />
 
 

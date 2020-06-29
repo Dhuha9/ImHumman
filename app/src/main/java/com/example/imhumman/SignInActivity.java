@@ -1,29 +1,30 @@
 package com.example.imhumman;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity {
     Button btnSignIn;
     EditText edtEmail, edtPassword;
-    TextView txtSignUpNow;
+    TextView txtSignUpNow, txtForgotPassword;
+    ProgressBar progressBar;
     FirebaseAuth mAuth;
-    FirebaseUser currentUser;
+
     View.OnClickListener signUpListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -37,40 +38,53 @@ public class SignInActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            if (edtEmail.length() < 11) {
-                //dialog showing error
-            }
-
             String email = edtEmail.getText().toString();
             String password = edtPassword.getText().toString();
 
-            if (email.equals("") || password.equals("")) {
-                //dialog error embty
+            if (email.isEmpty()) {
+                edtEmail.setError("يجب كتابة الايميل");
+            } else if (password.equals("")) {
+                edtPassword.setError("يجب كتابة الباسورد");
+            } else {
+                signInUser(email, password);
             }
-
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Intent intent = new Intent(SignInActivity.this, AllPostsActivity.class);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(SignInActivity.this, "invalid email or password", Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    });
         }
     };
+    private View.OnClickListener restPassword = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(SignInActivity.this, ResetPassword.class);
+            startActivity(intent);
+        }
+    };
+
+    private void signInUser(String email, String password) {
+        progressBar.setVisibility(View.VISIBLE);
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressBar.setVisibility(View.GONE);
+                        if (task.isSuccessful()) {
+                            Intent intent = new Intent(SignInActivity.this, AllPostsActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(SignInActivity.this, "ايميل او باسورد غير صحيح", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         setToolbar();
+        getLayoutViews();
         mAuth = FirebaseAuth.getInstance();
+    }
 
+    private void getLayoutViews() {
         btnSignIn = findViewById(R.id.btnSignIn);
         btnSignIn.setOnClickListener(signInListener);
 
@@ -79,6 +93,9 @@ public class SignInActivity extends AppCompatActivity {
 
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
+        progressBar = findViewById(R.id.progressBar);
+        txtForgotPassword = findViewById(R.id.txtForgotPassword);
+        txtForgotPassword.setOnClickListener(restPassword);
     }
 
     private void setToolbar() {
@@ -86,10 +103,5 @@ public class SignInActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        currentUser = mAuth.getCurrentUser();
-    }
 
 }
